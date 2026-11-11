@@ -1,1 +1,399 @@
 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101a2b">
+<title>LIFEWISE | Your Life Under Control</title>
+<style>
+:root{--navy:#101a2b;--blue:#4169f5;--green:#12a879;--bg:#f3f6fb;--white:#fff;--ink:#18263b;--muted:#78869a;--line:#e6ebf2}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif}
+header{background:var(--navy);color:white;padding:18px}
+.brand{font-size:25px;font-weight:800;letter-spacing:1px}
+.tagline{font-size:11px;color:#b8c6dd;margin-top:5px}
+.headerrow{display:flex;justify-content:space-between;align-items:center}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--blue);display:grid;place-items:center;font-weight:bold}
+main{max-width:850px;margin:auto;padding:16px 13px 100px}
+h2{font-size:22px;margin:8px 0}
+.sub{color:var(--muted);font-size:13px;margin-bottom:17px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.card{background:white;border:1px solid var(--line);border-radius:15px;padding:15px;margin-bottom:12px}
+.stat{font-size:27px;font-weight:800;margin-top:9px;overflow-wrap:anywhere}
+.small{font-size:12px;color:var(--muted)}
+.icon{font-size:23px}
+button{border:0;background:var(--blue);color:white;padding:12px 15px;border-radius:10px;font-weight:bold;cursor:pointer}
+button.green{background:var(--green)}
+button.light{background:#edf1ff;color:var(--blue)}
+button.red{background:#fff0f0;color:#d33}
+input,textarea,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;margin:6px 0 12px;font:inherit;background:white;color:var(--ink)}
+textarea{min-height:85px;resize:vertical}
+label{font-size:13px;font-weight:bold}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.item{padding:12px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.item:last-child{border:0}
+.item strong{display:block;margin-bottom:5px}
+.item small{color:var(--muted)}
+.pill{display:inline-block;background:#edf1ff;color:var(--blue);padding:5px 9px;border-radius:20px;font-size:11px}
+.empty{text-align:center;color:var(--muted);padding:22px;font-size:13px}
+.page{display:none}
+.page.active{display:block}
+.sectiontitle{font-weight:bold;font-size:16px;margin:19px 0 10px}
+.notice{background:#fff8e7;border:1px solid #f2e2b6;color:#765b18;padding:12px;border-radius:10px;font-size:12px;line-height:1.5;margin:10px 0}
+nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:7px 2px max(7px,env(safe-area-inset-bottom));z-index:10}
+nav button{background:white;color:#78869a;flex:1;padding:7px 1px;font-size:10px;border-radius:8px}
+nav button.active{color:var(--blue);background:#edf1ff}
+nav span{display:block;font-size:18px;margin-bottom:3px}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:15px}
+.progress{height:8px;background:#edf0f5;border-radius:10px;overflow:hidden;margin-top:8px}
+.progress div{height:100%;background:var(--green)}
+@media(min-width:650px){.grid{grid-template-columns:repeat(4,1fr)}main{padding-top:25px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="headerrow">
+  <div><div class="brand">✦ LIFEWISE</div><div class="tagline">YOUR LIFE. UNDER CONTROL.</div></div>
+  <div class="avatar">LW</div>
+ </div>
+</header>
+
+<main>
+
+<section id="home" class="page active">
+ <h2 id="greeting">Welcome to LIFEWISE</h2>
+ <div class="sub" id="today"></div>
+ <div class="grid">
+  <div class="card"><div class="icon">☑️</div><div class="small">Tasks</div><div class="stat" id="taskCount">0</div></div>
+  <div class="card"><div class="icon">🔔</div><div class="small">Reminders</div><div class="stat" id="remCount">0</div></div>
+  <div class="card"><div class="icon">💰</div><div class="small">Expenses</div><div class="stat" id="expenseTotal">$0</div></div>
+  <div class="card"><div class="icon">📝</div><div class="small">Notes</div><div class="stat" id="noteCount">0</div></div>
+ </div>
+ <div class="sectiontitle">Quick actions</div>
+ <div class="grid">
+  <button onclick="showPage('tasks')">＋ Add task</button>
+  <button class="light" onclick="showPage('reminders')">＋ Reminder</button>
+  <button class="light" onclick="showPage('money')">＋ Expense</button>
+  <button class="light" onclick="showPage('assistant')">✦ Assistant</button>
+ </div>
+ <div class="sectiontitle">Coming up</div>
+ <div class="card" id="upcoming"></div>
+ <div class="notice">🔒 Your data is stored in this browser on this device. Make regular backups.</div>
+</section>
+
+<section id="tasks" class="page">
+ <h2>My Tasks</h2><div class="sub">Everything you need to get done.</div>
+ <div class="card">
+  <label>Task</label><input id="taskInput" placeholder="What do you need to do?">
+  <label>Due date</label><input id="taskDate" type="date">
+  <button class="green" onclick="addTask()">＋ Add task</button>
+ </div>
+ <div class="card"><div class="row"><strong>My list</strong><span class="pill" id="taskPill">0 tasks</span></div><div id="taskList"></div></div>
+</section>
+
+<section id="reminders" class="page">
+ <h2>Reminders</h2><div class="sub">Never forget important dates.</div>
+ <div class="card">
+  <label>Reminder</label><input id="remInput" placeholder="e.g. Pay electricity bill">
+  <label>Date</label><input id="remDate" type="date">
+  <label>Time</label><input id="remTime" type="time">
+  <button class="green" onclick="addReminder()">＋ Save reminder</button>
+ </div>
+ <div class="card"><strong>My reminders</strong><div id="remList"></div></div>
+</section>
+
+<section id="money" class="page">
+ <h2>Money Manager</h2><div class="sub">Track your personal expenses.</div>
+ <div class="card">
+  <label>Currency</label>
+  <select id="currency" onchange="render()">
+   <option value="USD">USD ($)</option><option value="ZAR">ZAR (R)</option><option value="EUR">EUR (€)</option><option value="GBP">GBP (£)</option><option value="AUD">AUD (A$)</option><option value="INR">INR (₹)</option>
+  </select>
+  <label>Description</label><input id="expenseName" placeholder="Groceries, fuel, etc.">
+  <label>Amount</label><input id="expenseAmount" type="number" min="0" step=".01" placeholder="0.00">
+  <label>Date</label><input id="expenseDate" type="date">
+  <button class="green" onclick="addExpense()">＋ Add expense</button>
+ </div>
+ <div class="card"><div class="small">Total recorded expenses</div><div class="stat" id="moneyTotal">$0</div><div id="expenseList"></div></div>
+ <div class="notice">This is an expense tracker, not a connected bank account or financial advice service.</div>
+</section>
+
+<section id="documents" class="page">
+ <h2>Documents</h2><div class="sub">Organise important document information.</div>
+ <div class="card">
+  <label>Document name</label><input id="docName" placeholder="Insurance policy">
+  <label>Category</label><select id="docType"><option>Personal</option><option>Financial</option><option>Insurance</option><option>Medical</option><option>Legal</option><option>Work</option><option>Other</option></select>
+  <label>Important notes</label><textarea id="docNote" placeholder="Expiry date or details"></textarea>
+  <button class="green" onclick="addDocument()">＋ Save document</button>
+ </div>
+ <div class="card"><strong>My documents</strong><div id="docList"></div></div>
+ <div class="notice">This version stores document records, not actual uploaded files. Do not store passwords or sensitive identity numbers.</div>
+</section>
+
+<section id="notes" class="page">
+ <h2>My Notes</h2><div class="sub">Save your ideas and thoughts.</div>
+ <div class="card">
+  <label>Title</label><input id="noteTitle" placeholder="Note title">
+  <label>Note</label><textarea id="noteText" placeholder="Write something..."></textarea>
+  <button class="green" onclick="addNote()">＋ Save note</button>
+ </div>
+ <div class="card"><strong>Saved notes</strong><div id="noteList"></div></div>
+</section>
+
+<section id="family" class="page">
+ <h2>Family Planner</h2><div class="sub">Keep track of family activities.</div>
+ <div class="card">
+  <label>Family member</label><input id="familyName" placeholder="Name">
+  <label>Task or event</label><input id="familyTask" placeholder="School appointment">
+  <label>Date</label><input id="familyDate" type="date">
+  <button class="green" onclick="addFamily()">＋ Add family item</button>
+ </div>
+ <div class="card"><strong>Family list</strong><div id="familyList"></div></div>
+ <div class="notice">Family sharing between different phones is not yet available.</div>
+</section>
+
+<section id="assistant" class="page">
+ <h2>✦ LIFEWISE Assistant</h2><div class="sub">Your everyday planning helper.</div>
+ <div class="card">
+  <div class="notice">This first version has a basic built-in helper, not a connected AI service yet.</div>
+  <label>What do you need help with?</label>
+  <textarea id="askInput" placeholder="Help me organise my week..."></textarea>
+  <button onclick="askAssistant()">Ask LIFEWISE ✦</button>
+  <div id="answer" style="margin-top:15px;line-height:1.6"></div>
+ </div>
+ <div class="card"><strong>Try these:</strong><div class="actions">
+  <button class="light" onclick="quickAsk('Help me plan my day')">Plan my day</button>
+  <button class="light" onclick="quickAsk('Give me money saving tips')">Save money</button>
+  <button class="light" onclick="quickAsk('Help me organise my week')">Organise week</button>
+ </div></div>
+</section>
+
+<section id="settings" class="page">
+ <h2>Settings & Backup</h2><div class="sub">Manage your LIFEWISE data.</div>
+ <div class="card">
+  <label>Your name</label><input id="userName" placeholder="Your name">
+  <button onclick="saveName()">Save name</button>
+ </div>
+ <div class="card">
+  <strong>Backup your information</strong>
+  <p class="small">Download a copy of all your saved data.</p>
+  <button class="green" onclick="backupData()">⬇ Download backup</button>
+  <hr>
+  <strong>Restore backup</strong>
+  <p class="small">Choose a previous LIFEWISE backup file.</p>
+  <input type="file" id="restoreFile" accept=".json,application/json">
+  <button class="light" onclick="restoreData()">Restore backup</button>
+ </div>
+ <div class="card">
+  <strong>Data management</strong>
+  <p class="small">Delete all locally saved LIFEWISE information.</p>
+  <button class="red" onclick="deleteAll()">Delete all data</button>
+ </div>
+ <div class="notice">Backups are important. Clearing browser data can erase information saved on this device.</div>
+ <footer>LIFEWISE V1.0 • Your Life. Under Control.</footer>
+</section>
+
+</main>
+
+<nav>
+ <button class="active" data-page="home" onclick="showPage('home')"><span>⌂</span>Home</button>
+ <button data-page="tasks" onclick="showPage('tasks')"><span>☑</span>Tasks</button>
+ <button data-page="reminders" onclick="showPage('reminders')"><span>🔔</span>Reminders</button>
+ <button data-page="money" onclick="showPage('money')"><span>💰</span>Money</button>
+ <button data-page="assistant" onclick="showPage('assistant')"><span>✦</span>AI Help</button>
+ <button data-page="settings" onclick="showPage('settings')"><span>⚙</span>More</button>
+</nav>
+
+<script>
+const KEY="lifewise_global_v1";
+let data={tasks:[],reminders:[],expenses:[],documents:[],notes:[],family:[],name:""};
+function load(){
+ try{
+  const saved=JSON.parse(localStorage.getItem(KEY));
+  if(saved)data={...data,...saved};
+ }catch(e){console.log("Could not load saved data");}
+}
+function save(){
+ try{localStorage.setItem(KEY,JSON.stringify(data));}
+ catch(e){alert("Storage is full. Please download a backup and remove some data.");}
+ render();
+}
+function el(id){return document.getElementById(id);}
+function val(id){return el(id).value.trim();}
+function safe(s){
+ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function dateNow(){return new Date().toISOString().slice(0,10);}
+function money(n){
+ const currency=el("currency")?.value||"USD";
+ try{return new Intl.NumberFormat(undefined,{style:"currency",currency}).format(Number(n)||0);}
+ catch(e){return currency+" "+Number(n||0).toFixed(2);}
+}
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+ el(id).classList.add("active");
+ render();
+ window.scrollTo(0,0);
+}
+function addTask(){
+ const name=val("taskInput");
+ if(!name)return alert("Please enter a task.");
+ data.tasks.unshift({id:Date.now(),name,date:val("taskDate"),done:false});
+ el("taskInput").value="";el("taskDate").value="";
+ save();
+}
+function toggleTask(id){
+ const t=data.tasks.find(x=>x.id===id);if(t)t.done=!t.done;save();
+}
+function addReminder(){
+ const name=val("remInput"),date=val("remDate");
+ if(!name||!date)return alert("Please enter a reminder and date.");
+ data.reminders.unshift({id:Date.now(),name,date,time:val("remTime")});
+ el("remInput").value="";el("remDate").value="";el("remTime").value="";
+ save();
+}
+function addExpense(){
+ const name=val("expenseName"),amount=Number(val("expenseAmount"));
+ if(!name||!Number.isFinite(amount)||amount<=0)return alert("Enter a description and valid amount.");
+ data.expenses.unshift({id:Date.now(),name,amount,date:val("expenseDate")||dateNow()});
+ el("expenseName").value="";el("expenseAmount").value="";el("expenseDate").value="";
+ save();
+}
+function addDocument(){
+ const name=val("docName");
+ if(!name)return alert("Enter a document name.");
+ data.documents.unshift({id:Date.now(),name,type:el("docType").value,note:val("docNote")});
+ el("docName").value="";el("docNote").value="";
+ save();
+}
+function addNote(){
+ const title=val("noteTitle"),text=val("noteText");
+ if(!title||!text)return alert("Enter a title and note.");
+ data.notes.unshift({id:Date.now(),title,text});
+ el("noteTitle").value="";el("noteText").value="";
+ save();
+}
+function addFamily(){
+ const name=val("familyName"),task=val("familyTask");
+ if(!name||!task)return alert("Enter a name and event.");
+ data.family.unshift({id:Date.now(),name,task,date:val("familyDate")});
+ el("familyName").value="";el("familyTask").value="";el("familyDate").value="";
+ save();
+}
+function removeItem(type,id){
+ if(!confirm("Delete this item?"))return;
+ data[type]=data[type].filter(x=>x.id!==id);save();
+}
+function listHTML(items,fn){
+ if(!items.length)return '<div class="empty">Nothing here yet.</div>';
+ return items.map(fn).join("");
+}
+function render(){
+ if(!el("taskList"))return;
+ el("taskCount").textContent=data.tasks.filter(x=>!x.done).length;
+ el("remCount").textContent=data.reminders.length;
+ el("noteCount").textContent=data.notes.length;
+ const total=data.expenses.reduce((a,x)=>a+Number(x.amount),0);
+ el("expenseTotal").textContent=money(total);
+ el("moneyTotal").textContent=money(total);
+ el("taskPill").textContent=data.tasks.length+" tasks";
+
+ el("taskList").innerHTML=listHTML(data.tasks,t=>`
+ <div class="item">
+ <div class="row">
+ <div style="flex:1"><strong class="${t.done?'done':''}">${safe(t.name)}</strong><small>${safe(t.date||"No due date")}</small></div>
+ <input aria-label="Complete task" type="checkbox" style="width:22px;margin:0" ${t.done?"checked":""} onchange="toggleTask(${t.id})">
+ <button class="red" onclick="removeItem('tasks',${t.id})">×</button>
+ </div></div>`);
+
+ el("remList").innerHTML=listHTML(data.reminders,r=>`
+ <div class="item"><div class="row"><div style="flex:1"><strong>${safe(r.name)}</strong><small>${safe(r.date)} ${safe(r.time)}</small></div><button class="red" onclick="removeItem('reminders',${r.id})">×</button></div></div>`);
+
+ el("expenseList").innerHTML=listHTML(data.expenses,e=>`
+ <div class="item"><div class="row"><div><strong>${safe(e.name)}</strong><small>${safe(e.date)}</small></div><strong>${money(e.amount)}</strong><button class="red" onclick="removeItem('expenses',${e.id})">×</button></div></div>`);
+
+ el("docList").innerHTML=listHTML(data.documents,d=>`
+ <div class="item"><div class="row"><div style="flex:1"><strong>${safe(d.name)}</strong><span class="pill">${safe(d.type)}</span><small style="display:block;margin-top:5px">${safe(d.note)}</small></div><button class="red" onclick="removeItem('documents',${d.id})">×</button></div></div>`);
+
+ el("noteList").innerHTML=listHTML(data.notes,n=>`
+ <div class="item"><div class="row"><div style="flex:1"><strong>${safe(n.title)}</strong><div style="white-space:pre-wrap;font-size:13px">${safe(n.text)}</div></div><button class="red" onclick="removeItem('notes',${n.id})">×</button></div></div>`);
+
+ el("familyList").innerHTML=listHTML(data.family,f=>`
+ <div class="item"><div class="row"><div style="flex:1"><strong>${safe(f.task)}</strong><small>${safe(f.name)} • ${safe(f.date)}</small></div><button class="red" onclick="removeItem('family',${f.id})">×</button></div></div>`);
+
+ const upcoming=[
+ ...data.reminders.map(x=>({...x,kind:"Reminder"})),
+ ...data.tasks.filter(x=>!x.done&&x.date).map(x=>({...x,kind:"Task"})),
+ ...data.family.filter(x=>x.date).map(x=>({...x,name:x.task,kind:"Family"}))
+ ].filter(x=>x.date).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,6);
+ el("upcoming").innerHTML=listHTML(upcoming,x=>`
+ <div class="item"><strong>${safe(x.name)}</strong><small>${safe(x.kind)} • ${safe(x.date)} ${safe(x.time||"")}</small></div>`);
+
+ el("greeting").textContent="Hello"+(data.name?" "+data.name:"")+"!";
+ el("today").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+ if(el("userName"))el("userName").value=data.name;
+}
+function saveName(){
+ data.name=val("userName");save();alert("Name saved!");
+}
+function quickAsk(q){el("askInput").value=q;askAssistant();}
+function askAssistant(){
+ const q=val("askInput").toLowerCase();
+ if(!q)return alert("Please type a question.");
+ let answer="";
+ if(q.includes("plan")||q.includes("week")||q.includes("day")){
+  const tasks=data.tasks.filter(t=>!t.done);
+  answer="Here is a simple plan:<br><br>";
+  answer+="1. Start with your most important task.<br>2. Check your upcoming reminders.<br>3. Set aside time for meals and rest.<br>4. Complete smaller tasks together.<br><br>";
+  answer+="You currently have <b>"+tasks.length+"</b> unfinished tasks.";
+  if(tasks.length)answer+="<br><br>Your tasks:<br>"+tasks.slice(0,5).map(t=>"• "+safe(t.name)).join("<br>");
+ }else if(q.includes("money")||q.includes("save")||q.includes("budget")){
+  answer="Money-saving ideas:<br><br>1. Write down every expense.<br>2. Compare prices before buying.<br>3. Set a weekly spending limit.<br>4. Cancel services you do not use.<br>5. Save a small amount regularly.<br><br>Your recorded expenses: <b>"+money(data.expenses.reduce((a,x)=>a+x.amount,0))+"</b>.";
+ }else if(q.includes("remind")||q.includes("remember")){
+  answer="You have "+data.reminders.length+" saved reminders. Open the Reminders tab to manage them. Remember to allow browser notifications if you later enable them.";
+ }else if(q.includes("task")||q.includes("work")){
+  answer="You have "+data.tasks.filter(t=>!t.done).length+" unfinished tasks. Start with the most urgent one and break large jobs into smaller steps.";
+ }else if(q.includes("hello")||q.includes("hi")){
+  answer="Hello! Welcome to LIFEWISE. I can help you organise tasks, plan your day and think about saving money.";
+ }else{
+  answer="Thanks for asking LIFEWISE! I am currently running in basic helper mode. I can help with planning, tasks, reminders and basic money-saving suggestions. A connected AI service is planned for a future version.";
+ }
+ el("answer").innerHTML="<div class='card' style='background:#edf1ff;border:0'>"+answer+"</div>";
+}
+function backupData(){
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");a.href=url;a.download="LIFEWISE-backup.json";a.click();
+ URL.revokeObjectURL(url);
+}
+function restoreData(){
+ const file=el("restoreFile").files[0];
+ if(!file)return alert("Choose a backup file first.");
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const d=JSON.parse(reader.result);
+   if(!d||typeof d!=="object"||!Array.isArray(d.tasks)||!Array.isArray(d.reminders))throw Error();
+   if(!confirm("This will replace your current LIFEWISE data. Continue?"))return;
+   data={tasks:[],reminders:[],expenses:[],documents:[],notes:[],family:[],name:"",...d};
+   save();alert("Backup restored successfully.");
+  }catch(e){alert("This backup file is not valid.");}
+ };
+ reader.readAsText(file);
+}
+function deleteAll(){
+ if(!confirm("Delete ALL LIFEWISE data on this device? This cannot be undone."))return;
+ if(!confirm("Are you absolutely sure? Download a backup first if needed."))return;
+ localStorage.removeItem(KEY);
+ data={tasks:[],reminders:[],expenses:[],documents:[],notes:[],family:[],name:""};
+ save();alert("Your local LIFEWISE data has been deleted.");
+}
+load();
+render();
+</script>
+</body>
+</html>
