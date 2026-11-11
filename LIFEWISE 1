@@ -1,0 +1,651 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101b30">
+<title>LIFEWISE - Your Life. Under Control.</title>
+<style>
+:root {
+ --bg:#f3f6fb;--panel:#fff;--navy:#101b30;
+ --blue:#4169e1;--teal:#18a999;--text:#17243a;
+ --muted:#718096;--border:#e5eaf1;--red:#e05252;
+ --shadow:0 5px 20px rgba(20,35,60,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:var(--text)}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{width:245px;background:var(--navy);color:white;padding:25px 16px;flex-shrink:0}
+.logo{font-size:25px;font-weight:800;letter-spacing:1px;padding:5px 10px}
+.logo span{color:#35c9b4}
+.tagline{font-size:11px;color:#aab7ce;padding:5px 10px 25px}
+.nav-title{font-size:10px;color:#8091ad;margin:20px 10px 8px;letter-spacing:1.5px}
+.nav button{display:flex;align-items:center;gap:12px;width:100%;padding:12px 13px;border:0;background:none;color:#c7d1e2;text-align:left;border-radius:9px;margin:3px 0;font-size:14px}
+.nav button:hover,.nav button.active{background:#253754;color:white}
+.nav button.active{border-left:3px solid #35c9b4}
+.sidebar-footer{margin-top:35px;padding:12px;color:#8091ad;font-size:11px}
+.main{flex:1;min-width:0}
+.topbar{height:70px;background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:5}
+.topbar small{color:var(--muted)}
+.avatar{background:#e4f4f1;color:#168f81;padding:11px;border-radius:50%;font-weight:bold}
+.content{max-width:1200px;margin:auto;padding:30px}
+.page{display:none}.page.active{display:block}
+h1{font-size:27px;margin:0 0 8px}
+h2{font-size:19px;margin:0 0 16px}
+.subtitle{color:var(--muted);margin-bottom:25px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:19px;box-shadow:var(--shadow);margin-bottom:17px}
+.stat-label{font-size:12px;color:var(--muted)}
+.stat-number{font-size:27px;font-weight:750;margin:12px 0 5px}
+.stat-icon{font-size:22px}
+.stat-note{font-size:11px;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:17px}
+.btn{background:var(--blue);color:white;border:0;padding:10px 15px;border-radius:8px;font-size:13px;font-weight:600}
+.btn:hover{opacity:.88}
+.btn.secondary{background:#eaf0ff;color:#3154b5}
+.btn.green{background:var(--teal)}
+.btn.red{background:#fff0f0;color:#c33}
+.btn.dark{background:var(--navy)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:13px}
+.field label{font-size:12px;font-weight:bold;color:#526078}
+.field input,.field textarea,.field select,.search{
+ width:100%;padding:11px;border:1px solid var(--border);border-radius:8px;background:white;outline:none;color:var(--text)
+}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--blue)}
+.field textarea{min-height:85px;resize:vertical}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}
+.item:last-child{border-bottom:0}
+.item strong{font-size:13px}
+.item small{display:block;color:var(--muted);font-size:11px;margin-top:5px}
+.pill{font-size:10px;padding:5px 8px;border-radius:20px;background:#e9f7f4;color:#168b7d}
+.pill.red{background:#fff0f0;color:#c33}
+.pill.blue{background:#edf1ff;color:#4169e1}
+.empty{text-align:center;color:var(--muted);padding:25px;font-size:13px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tabs button{padding:9px 13px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--text)}
+.tabs button.active{background:var(--navy);color:white}
+.chat{height:340px;overflow-y:auto;background:#f7f9fc;border:1px solid var(--border);border-radius:10px;padding:15px;margin-bottom:12px}
+.message{padding:11px 13px;border-radius:12px;margin:9px 0;max-width:90%;font-size:13px;line-height:1.5;white-space:pre-wrap}
+.message.bot{background:white;border:1px solid var(--border)}
+.message.user{background:#e6edff;margin-left:auto}
+.chat-input{display:flex;gap:8px}
+.chat-input input{flex:1;min-width:0;padding:12px;border:1px solid var(--border);border-radius:9px}
+.progress{height:7px;background:#edf0f5;border-radius:10px;overflow:hidden;margin:12px 0}
+.progress div{height:100%;background:var(--teal)}
+.check{width:17px;height:17px;accent-color:var(--teal)}
+.completed{text-decoration:line-through;color:#9aa4b3}
+.money{font-weight:bold;color:#168b7d}
+.notice{background:#eaf5ff;border:1px solid #d5e7ff;padding:13px;border-radius:9px;font-size:12px;line-height:1.6;margin-bottom:15px}
+.footer{text-align:center;color:#9aa4b3;font-size:10px;padding:30px}
+.mobile-menu{display:none}
+@media(max-width:850px){
+ .sidebar{width:205px}.grid{grid-template-columns:1fr 1fr}
+ .content{padding:20px}
+}
+@media(max-width:600px){
+ .app{display:block}.sidebar{width:100%;padding:12px;position:relative}
+ .logo{font-size:21px}.tagline{padding-bottom:10px}
+ .nav{display:flex;overflow-x:auto;gap:4px}
+ .nav-title,.sidebar-footer{display:none}
+ .nav button{white-space:nowrap;width:auto;flex-shrink:0;font-size:12px;padding:10px}
+ .topbar{height:55px;padding:0 15px}
+ .content{padding:16px 12px}
+ .grid{gap:9px}.card{padding:14px}
+ .stat-number{font-size:22px}
+ .two{grid-template-columns:1fr}
+ h1{font-size:23px}
+ .form-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar">
+ <div class="logo">LIFE<span>WISE</span></div>
+ <div class="tagline">YOUR LIFE. UNDER CONTROL.</div>
+ <div class="nav-title">MAIN MENU</div>
+ <nav class="nav">
+  <button class="active" onclick="showPage('dashboard',this)">🏠 Dashboard</button>
+  <button onclick="showPage('tasks',this)">✓ Tasks</button>
+  <button onclick="showPage('reminders',this)">🔔 Reminders</button>
+  <button onclick="showPage('money',this)">💰 My Money</button>
+  <button onclick="showPage('documents',this)">📄 Documents</button>
+  <button onclick="showPage('notes',this)">📝 Notes</button>
+  <button onclick="showPage('assistant',this)">🤖 AI Assistant</button>
+  <button onclick="showPage('family',this)">👨‍👩‍👧 Family</button>
+  <button onclick="showPage('settings',this)">⚙ Settings</button>
+ </nav>
+ <div class="sidebar-footer">LIFEWISE V1.0<br>Personal Life Organizer</div>
+</aside>
+
+<main class="main">
+ <header class="topbar">
+  <div><strong id="topTitle">Dashboard</strong><br><small id="today"></small></div>
+  <div class="avatar" id="avatar">LW</div>
+ </header>
+
+ <div class="content">
+
+ <!-- DASHBOARD -->
+ <section id="dashboard" class="page active">
+  <h1 id="welcome">Welcome to LIFEWISE 👋</h1>
+  <div class="subtitle">Everything important in your life, in one place.</div>
+  <div class="grid">
+   <div class="card">
+    <div class="stat-icon">✓</div><div class="stat-label">Open Tasks</div>
+    <div class="stat-number" id="statTasks">0</div><div class="stat-note">Tasks to complete</div>
+   </div>
+   <div class="card">
+    <div class="stat-icon">🔔</div><div class="stat-label">Reminders</div>
+    <div class="stat-number" id="statReminders">0</div><div class="stat-note">Upcoming reminders</div>
+   </div>
+   <div class="card">
+    <div class="stat-icon">💰</div><div class="stat-label">Monthly Income</div>
+    <div class="stat-number" id="statIncome">0</div><div class="stat-note">Recorded income</div>
+   </div>
+   <div class="card">
+    <div class="stat-icon">📄</div><div class="stat-label">Documents</div>
+    <div class="stat-number" id="statDocs">0</div><div class="stat-note">Saved records</div>
+   </div>
+  </div>
+  <div class="two">
+   <div class="card">
+    <h2>📌 Today's Tasks</h2>
+    <div id="dashboardTasks"></div>
+    <button class="btn secondary" onclick="showPage('tasks')">View all tasks</button>
+   </div>
+   <div class="card">
+    <h2>⏰ Upcoming Reminders</h2>
+    <div id="dashboardReminders"></div>
+    <button class="btn secondary" onclick="showPage('reminders')">View reminders</button>
+   </div>
+  </div>
+  <div class="card">
+   <h2>🚀 Quick Actions</h2>
+   <div class="actions">
+    <button class="btn" onclick="showPage('tasks')">+ Add Task</button>
+    <button class="btn green" onclick="showPage('reminders')">+ Reminder</button>
+    <button class="btn secondary" onclick="showPage('money')">+ Add Expense</button>
+    <button class="btn dark" onclick="showPage('assistant')">Ask LIFEWISE</button>
+   </div>
+  </div>
+ </section>
+
+ <!-- TASKS -->
+ <section id="tasks" class="page">
+  <h1>My Tasks ✓</h1><div class="subtitle">Keep track of everything you need to do.</div>
+  <div class="card">
+   <h2>Add a new task</h2>
+   <form onsubmit="addTask(event)">
+    <div class="field"><label>Task name</label><input id="taskName" required placeholder="What needs to be done?"></div>
+    <div class="form-grid">
+     <div class="field"><label>Due date</label><input type="date" id="taskDate"></div>
+     <div class="field"><label>Priority</label><select id="taskPriority"><option>Normal</option><option>High</option><option>Urgent</option></select></div>
+    </div>
+    <button class="btn">+ Add Task</button>
+   </form>
+  </div>
+  <div class="card"><h2>My task list</h2><div id="taskList"></div></div>
+ </section>
+
+ <!-- REMINDERS -->
+ <section id="reminders" class="page">
+  <h1>Reminders 🔔</h1><div class="subtitle">Never forget an important date again.</div>
+  <div class="card">
+   <h2>Create reminder</h2>
+   <form onsubmit="addReminder(event)">
+    <div class="field"><label>Reminder title</label><input id="remName" required placeholder="e.g. Pay insurance"></div>
+    <div class="form-grid">
+     <div class="field"><label>Date</label><input type="date" id="remDate" required></div>
+     <div class="field"><label>Time</label><input type="time" id="remTime" value="09:00"></div>
+    </div>
+    <div class="field"><label>Details</label><textarea id="remDetails" placeholder="Additional information"></textarea></div>
+    <button class="btn green">Save Reminder</button>
+   </form>
+  </div>
+  <div class="card"><h2>Saved reminders</h2><div id="reminderList"></div></div>
+ </section>
+
+ <!-- MONEY -->
+ <section id="money" class="page">
+  <h1>My Money 💰</h1><div class="subtitle">Keep an eye on your income and expenses.</div>
+  <div class="grid">
+   <div class="card"><div class="stat-label">Income</div><div class="stat-number money" id="moneyIncome">0</div></div>
+   <div class="card"><div class="stat-label">Expenses</div><div class="stat-number" id="moneyExpenses">0</div></div>
+   <div class="card"><div class="stat-label">Balance</div><div class="stat-number" id="moneyBalance">0</div></div>
+   <div class="card"><div class="stat-label">Transactions</div><div class="stat-number" id="moneyCount">0</div></div>
+  </div>
+  <div class="card">
+   <h2>Add transaction</h2>
+   <form onsubmit="addTransaction(event)">
+    <div class="form-grid">
+     <div class="field"><label>Description</label><input id="transName" required placeholder="e.g. Salary or groceries"></div>
+     <div class="field"><label>Amount</label><input type="number" id="transAmount" min="0.01" step="0.01" required placeholder="0.00"></div>
+     <div class="field"><label>Type</label><select id="transType"><option value="expense">Expense</option><option value="income">Income</option></select></div>
+     <div class="field"><label>Category</label><select id="transCategory"><option>General</option><option>Food</option><option>Transport</option><option>Housing</option><option>Health</option><option>Salary</option><option>Business</option><option>Other</option></select></div>
+    </div>
+    <button class="btn green">Save Transaction</button>
+   </form>
+  </div>
+  <div class="card"><h2>Transaction history</h2><div id="transactionList"></div></div>
+ </section>
+
+ <!-- DOCUMENTS -->
+ <section id="documents" class="page">
+  <h1>My Documents 📄</h1><div class="subtitle">Organise your important document records.</div>
+  <div class="notice">This first version stores document details and links, not uploaded files. Do not enter sensitive ID numbers, bank details or passwords.</div>
+  <div class="card">
+   <h2>Add document record</h2>
+   <form onsubmit="addDocument(event)">
+    <div class="form-grid">
+     <div class="field"><label>Document name</label><input id="docName" required placeholder="e.g. Insurance policy"></div>
+     <div class="field"><label>Category</label><select id="docCategory"><option>Personal</option><option>Financial</option><option>Insurance</option><option>Business</option><option>Legal</option><option>Other</option></select></div>
+    </div>
+    <div class="field"><label>Important date</label><input type="date" id="docDate"></div>
+    <div class="field"><label>Document link (optional)</label><input id="docLink" type="url" placeholder="https://..."></div>
+    <button class="btn">Save Document Record</button>
+   </form>
+  </div>
+  <div class="card"><h2>My records</h2><div id="documentList"></div></div>
+ </section>
+
+ <!-- NOTES -->
+ <section id="notes" class="page">
+  <h1>My Notes 📝</h1><div class="subtitle">Ideas, plans and things worth remembering.</div>
+  <div class="card">
+   <form onsubmit="addNote(event)">
+    <div class="field"><label>Note title</label><input id="noteTitle" required placeholder="Title"></div>
+    <div class="field"><label>Your note</label><textarea id="noteText" required placeholder="Write something..."></textarea></div>
+    <button class="btn">Save Note</button>
+   </form>
+  </div>
+  <div id="noteList"></div>
+ </section>
+
+ <!-- ASSISTANT -->
+ <section id="assistant" class="page">
+  <h1>LIFEWISE Assistant 🤖</h1>
+  <div class="subtitle">Your personal helper for everyday tasks.</div>
+  <div class="notice">This is a basic offline assistant in V1. It does not connect to a real AI model yet. We will add secure AI integration in a later version.</div>
+  <div class="card">
+   <div class="chat" id="chat">
+    <div class="message bot">Hello! 👋 I am LIFEWISE.
+
+I can help you organise your day, understand basic questions and plan your next steps.
+
+What would you like help with?</div>
+   </div>
+   <div class="chat-input">
+    <input id="chatInput" placeholder="Ask LIFEWISE something..." onkeydown="if(event.key==='Enter')sendChat()">
+    <button class="btn" onclick="sendChat()">Send</button>
+   </div>
+   <div class="actions" style="margin-top:12px">
+    <button class="btn secondary" onclick="quickAsk('Help me plan my day')">Plan my day</button>
+    <button class="btn secondary" onclick="quickAsk('How can I save money?')">Save money</button>
+    <button class="btn secondary" onclick="quickAsk('Give me productivity tips')">Productivity</button>
+   </div>
+  </div>
+ </section>
+
+ <!-- FAMILY -->
+ <section id="family" class="page">
+  <h1>Family Organizer 👨‍👩‍👧</h1><div class="subtitle">Keep important family information and shared tasks organised.</div>
+  <div class="notice">Family records in this prototype are stored only on this device. They are not shared with other family members yet.</div>
+  <div class="card">
+   <h2>Add family member</h2>
+   <form onsubmit="addFamily(event)">
+    <div class="form-grid">
+     <div class="field"><label>Name</label><input id="familyName" required placeholder="Name"></div>
+     <div class="field"><label>Relationship</label><input id="familyRelation" placeholder="e.g. Partner"></div>
+    </div>
+    <button class="btn">Add Member</button>
+   </form>
+  </div>
+  <div class="card"><h2>Family members</h2><div id="familyList"></div></div>
+ </section>
+
+ <!-- SETTINGS -->
+ <section id="settings" class="page">
+  <h1>Settings ⚙</h1><div class="subtitle">Personalise your LIFEWISE experience.</div>
+  <div class="card">
+   <h2>Personal profile</h2>
+   <div class="field"><label>Your name</label><input id="userName" placeholder="Your name"></div>
+   <div class="field"><label>Currency</label>
+    <select id="currency">
+     <option value="ZAR">South African Rand (ZAR)</option>
+     <option value="USD">US Dollar (USD)</option>
+     <option value="EUR">Euro (EUR)</option>
+     <option value="GBP">British Pound (GBP)</option>
+     <option value="AUD">Australian Dollar (AUD)</option>
+     <option value="CAD">Canadian Dollar (CAD)</option>
+     <option value="INR">Indian Rupee (INR)</option>
+    </select>
+   </div>
+   <button class="btn" onclick="saveSettings()">Save Settings</button>
+  </div>
+  <div class="card">
+   <h2>Data backup</h2>
+   <p class="stat-note">Download your LIFEWISE information or restore it later.</p>
+   <div class="actions">
+    <button class="btn green" onclick="exportData()">⬇ Download Backup</button>
+    <button class="btn secondary" onclick="document.getElementById('restoreFile').click()">Restore Backup</button>
+    <input type="file" id="restoreFile" accept=".json,application/json" hidden onchange="importData(event)">
+   </div>
+  </div>
+  <div class="card">
+   <h2>Privacy and storage</h2>
+   <p class="stat-note">V1 uses local browser storage. Anyone with access to this browser profile may be able to access this information. It is not encrypted or synchronised online.</p>
+   <button class="btn red" onclick="clearData()">Delete all local app data</button>
+  </div>
+  <div class="card">
+   <h2>About LIFEWISE</h2>
+   <strong>LIFEWISE V1.0</strong>
+   <p class="stat-note">Your Life. Under Control.</p>
+  </div>
+ </section>
+
+ </div>
+ <div class="footer">LIFEWISE • YOUR LIFE. UNDER CONTROL. • V1.0</div>
+</main>
+</div>
+
+<script>
+const KEY='lifewise_global_v1';
+
+let db={
+ tasks:[],reminders:[],transactions:[],
+ documents:[],notes:[],family:[],
+ settings:{name:'',currency:'ZAR'}
+};
+
+function load(){
+ try{
+  const saved=localStorage.getItem(KEY);
+  if(saved){
+   const data=JSON.parse(saved);
+   db={...db,...data};
+   ['tasks','reminders','transactions','documents','notes','family'].forEach(k=>{
+    if(!Array.isArray(db[k]))db[k]=[];
+   });
+   db.settings={name:'',currency:'ZAR',...(db.settings||{})};
+  }
+ }catch(e){console.error('Storage error',e)}
+}
+
+function save(){
+ try{
+  localStorage.setItem(KEY,JSON.stringify(db));
+ }catch(e){
+  alert('Could not save data. Your browser storage may be full.');
+ }
+ render();
+}
+
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function esc(s){
+ return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function fmt(n){
+ try{return new Intl.NumberFormat(undefined,{style:'currency',currency:db.settings.currency||'ZAR'}).format(Number(n)||0)}
+ catch(e){return (Number(n)||0).toFixed(2)}
+}
+function dateFmt(d){
+ if(!d)return 'No date';
+ const dt=new Date(d+'T12:00:00');
+ return isNaN(dt)?d:dt.toLocaleDateString();
+}
+function today(){return new Date().toISOString().slice(0,10)}
+
+function showPage(page,btn){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ document.getElementById(page).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
+ if(btn)btn.classList.add('active');
+ else{
+  document.querySelectorAll('.nav button').forEach(b=>{
+   if(b.getAttribute('onclick')?.includes("'"+page+"'"))b.classList.add('active');
+  });
+ }
+ const titles={
+ dashboard:'Dashboard',tasks:'My Tasks',reminders:'Reminders',
+ money:'My Money',documents:'Documents',notes:'My Notes',
+ assistant:'AI Assistant',family:'Family Organizer',settings:'Settings'
+ };
+ document.getElementById('topTitle').textContent=titles[page]||page;
+ window.scrollTo(0,0);
+}
+
+function addTask(e){
+ e.preventDefault();
+ db.tasks.push({
+  id:id(),name:document.getElementById('taskName').value,
+  date:document.getElementById('taskDate').value,
+  priority:document.getElementById('taskPriority').value,
+  done:false
+ });
+ e.target.reset();save();
+}
+function toggleTask(i){
+ db.tasks[i].done=!db.tasks[i].done;save();
+}
+function deleteItem(group,i){
+ if(!confirm('Delete this item?'))return;
+ db[group].splice(i,1);save();
+}
+function addReminder(e){
+ e.preventDefault();
+ db.reminders.push({
+  id:id(),name:document.getElementById('remName').value,
+  date:document.getElementById('remDate').value,
+  time:document.getElementById('remTime').value,
+  details:document.getElementById('remDetails').value
+ });
+ e.target.reset();save();
+}
+function addTransaction(e){
+ e.preventDefault();
+ db.transactions.push({
+  id:id(),name:document.getElementById('transName').value,
+  amount:Number(document.getElementById('transAmount').value),
+  type:document.getElementById('transType').value,
+  category:document.getElementById('transCategory').value,
+  date:today()
+ });
+ e.target.reset();save();
+}
+function addDocument(e){
+ e.preventDefault();
+ const link=document.getElementById('docLink').value;
+ if(link && !/^https?:\/\//i.test(link)){
+  alert('Please enter a valid HTTP or HTTPS link.');return;
+ }
+ db.documents.push({
+  id:id(),name:document.getElementById('docName').value,
+  category:document.getElementById('docCategory').value,
+  date:document.getElementById('docDate').value,link
+ });
+ e.target.reset();save();
+}
+function addNote(e){
+ e.preventDefault();
+ db.notes.push({
+  id:id(),title:document.getElementById('noteTitle').value,
+  text:document.getElementById('noteText').value,
+  date:new Date().toLocaleString()
+ });
+ e.target.reset();save();
+}
+function addFamily(e){
+ e.preventDefault();
+ db.family.push({
+  id:id(),name:document.getElementById('familyName').value,
+  relation:document.getElementById('familyRelation').value
+ });
+ e.target.reset();save();
+}
+function saveSettings(){
+ db.settings.name=document.getElementById('userName').value.trim();
+ db.settings.currency=document.getElementById('currency').value;
+ save();alert('Settings saved!');
+}
+
+function rows(items,group,template){
+ if(!items.length)return '<div class="empty">Nothing here yet. Add your first item above.</div>';
+ return items.map((x,i)=>template(x,i)).join('');
+}
+
+function renderTasks(){
+ const html=rows(db.tasks,'tasks',(x,i)=>`
+ <div class="item">
+  <div style="display:flex;gap:10px;align-items:center;min-width:0">
+   <input class="check" type="checkbox" ${x.done?'checked':''} onchange="toggleTask(${i})">
+   <div><strong class="${x.done?'completed':''}">${esc(x.name)}</strong>
+   <small>${dateFmt(x.date)} • ${esc(x.priority)}</small></div>
+  </div>
+  <div class="actions"><button class="btn red" onclick="deleteItem('tasks',${i})">Delete</button></div>
+ </div>`);
+ document.getElementById('taskList').innerHTML=html;
+ document.getElementById('dashboardTasks').innerHTML=rows(
+  db.tasks.filter(x=>!x.done).slice(0,4),'tasks',(x,i)=>`
+  <div class="item"><div><strong>${esc(x.name)}</strong><small>${dateFmt(x.date)}</small></div><span class="pill">${esc(x.priority)}</span></div>`);
+}
+
+function renderReminders(){
+ const sorted=[...db.reminders].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+ document.getElementById('reminderList').innerHTML=rows(sorted,'reminders',(x)=>`
+ <div class="item"><div><strong>${esc(x.name)}</strong>
+ <small>${dateFmt(x.date)} ${esc(x.time)} ${x.details?'• '+esc(x.details):''}</small></div>
+ <button class="btn red" onclick="removeById('reminders','${x.id}')">Delete</button></div>`);
+ document.getElementById('dashboardReminders').innerHTML=rows(
+  sorted.filter(x=>x.date>=today()).slice(0,4),'reminders',(x)=>`
+  <div class="item"><div><strong>${esc(x.name)}</strong><small>${dateFmt(x.date)} • ${esc(x.time)}</small></div></div>`);
+}
+function removeById(group,key){
+ if(!confirm('Delete this item?'))return;
+ db[group]=db[group].filter(x=>x.id!==key);save();
+}
+function renderMoney(){
+ const inc=db.transactions.filter(x=>x.type==='income').reduce((s,x)=>s+x.amount,0);
+ const exp=db.transactions.filter(x=>x.type==='expense').reduce((s,x)=>s+x.amount,0);
+ document.getElementById('moneyIncome').textContent=fmt(inc);
+ document.getElementById('moneyExpenses').textContent=fmt(exp);
+ document.getElementById('moneyBalance').textContent=fmt(inc-exp);
+ document.getElementById('moneyCount').textContent=db.transactions.length;
+ document.getElementById('statIncome').textContent=fmt(inc);
+ document.getElementById('transactionList').innerHTML=rows(db.transactions,'transactions',(x,i)=>`
+ <div class="item"><div><strong>${esc(x.name)}</strong><small>${esc(x.category)} • ${dateFmt(x.date)}</small></div>
+ <div style="text-align:right"><strong class="${x.type==='income'?'money':''}">${x.type==='income'?'+':'-'}${fmt(x.amount)}</strong><br>
+ <button class="btn red" style="margin-top:6px" onclick="deleteItem('transactions',${i})">Delete</button></div></div>`);
+}
+function renderDocuments(){
+ document.getElementById('documentList').innerHTML=rows(db.documents,'documents',(x,i)=>`
+ <div class="item"><div><strong>${esc(x.name)}</strong><small>${esc(x.category)} • ${dateFmt(x.date)}</small>
+ ${x.link?`<small><a href="${esc(x.link)}" target="_blank" rel="noopener noreferrer">Open document link</a></small>`:''}</div>
+ <button class="btn red" onclick="deleteItem('documents',${i})">Delete</button></div>`);
+}
+function renderNotes(){
+ document.getElementById('noteList').innerHTML=rows(db.notes,'notes',(x,i)=>`
+ <div class="card"><div class="item"><strong>${esc(x.title)}</strong><button class="btn red" onclick="deleteItem('notes',${i})">Delete</button></div>
+ <p style="white-space:pre-wrap;font-size:13px;line-height:1.6">${esc(x.text)}</p><small>${esc(x.date)}</small></div>`);
+}
+function renderFamily(){
+ document.getElementById('familyList').innerHTML=rows(db.family,'family',(x,i)=>`
+ <div class="item"><div><strong>${esc(x.name)}</strong><small>${esc(x.relation)}</small></div>
+ <button class="btn red" onclick="deleteItem('family',${i})">Delete</button></div>`);
+}
+function render(){
+ document.getElementById('statTasks').textContent=db.tasks.filter(x=>!x.done).length;
+ document.getElementById('statReminders').textContent=db.reminders.filter(x=>x.date>=today()).length;
+ document.getElementById('statDocs').textContent=db.documents.length;
+ document.getElementById('welcome').textContent='Welcome'+(db.settings.name?' '+db.settings.name:'')+' 👋';
+ document.getElementById('avatar').textContent=(db.settings.name||'LW').slice(0,2).toUpperCase();
+ renderTasks();renderReminders();renderMoney();
+ renderDocuments();renderNotes();renderFamily();
+}
+function sendChat(){
+ const input=document.getElementById('chatInput');
+ const q=input.value.trim();if(!q)return;
+ addMessage(q,'user');input.value='';
+ setTimeout(()=>addMessage(answer(q),'bot'),200);
+}
+function quickAsk(q){
+ document.getElementById('chatInput').value=q;sendChat();
+}
+function addMessage(text,who){
+ const chat=document.getElementById('chat');
+ const div=document.createElement('div');
+ div.className='message '+who;
+ div.textContent=text;
+ chat.appendChild(div);chat.scrollTop=chat.scrollHeight;
+}
+function answer(q){
+ const s=q.toLowerCase();
+ if(s.includes('task')||s.includes('todo')||s.includes('day')){
+  return 'Here is your current task overview:\n\n'+
+  (db.tasks.filter(x=>!x.done).map(x=>'• '+x.name+' ('+dateFmt(x.date)+')').join('\n')||'You have no open tasks!')+
+  '\n\nYou can add tasks in the My Tasks section.';
+ }
+ if(s.includes('money')||s.includes('save')||s.includes('budget')){
+  const inc=db.transactions.filter(x=>x.type==='income').reduce((a,x)=>a+x.amount,0);
+  const exp=db.transactions.filter(x=>x.type==='expense').reduce((a,x)=>a+x.amount,0);
+  return 'Your recorded finances:\nIncome: '+fmt(inc)+'\nExpenses: '+fmt(exp)+'\nBalance: '+fmt(inc-exp)+
+  '\n\nTip: Track regular expenses and compare them monthly to identify possible savings.';
+ }
+ if(s.includes('remind')||s.includes('date')){
+  return 'Your upcoming reminders:\n'+(db.reminders.filter(x=>x.date>=today()).map(x=>'• '+x.name+' – '+dateFmt(x.date)).join('\n')||'No upcoming reminders recorded.')+
+  '\n\nYou can create a reminder in the Reminders section.';
+ }
+ if(s.includes('productiv')){
+  return 'Try these simple productivity habits:\n\n1. Choose three important tasks each morning.\n2. Do the hardest task first.\n3. Turn off unnecessary notifications.\n4. Take short breaks.\n5. Review your day before bed.';
+ }
+ if(s.includes('hello')||s.includes('hi '))return 'Hello! 👋 What would you like to organise today?';
+ return 'Thanks for your message! I am currently running in basic offline mode.\n\nI can show your tasks, reminders and recorded finances. Real AI conversations, document analysis and translations will be added through a secure AI service in a future LIFEWISE release.';
+}
+
+function exportData(){
+ const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
+ a.href=url;a.download='lifewise-backup.json';a.click();
+ URL.revokeObjectURL(url);
+}
+function importData(e){
+ const file=e.target.files[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const data=JSON.parse(reader.result);
+   const allowed=['tasks','reminders','transactions','documents','notes','family'];
+   if(!data||typeof data!=='object'||!allowed.every(k=>Array.isArray(data[k]))||!data.settings||typeof data.settings!=='object')throw new Error('Invalid backup');
+   if(!confirm('Replace current LIFEWISE data with this backup?'))return;
+   db=data;save();alert('Backup restored!');
+  }catch(err){alert('This backup file is invalid.');}
+  e.target.value='';
+ };
+ reader.readAsText(file);
+}
+function clearData(){
+ if(!confirm('Are you sure? This permanently deletes all LIFEWISE data saved in this browser.'))return;
+ if(!confirm('Final confirmation: delete everything?'))return;
+ localStorage.removeItem(KEY);
+ db={tasks:[],reminders:[],transactions:[],documents:[],notes:[],family:[],settings:{name:'',currency:'ZAR'}};
+ render();alert('Local app data deleted.');
+}
+function init(){
+ load();
+ document.getElementById('today').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+ document.getElementById('userName').value=db.settings.name||'';
+ document.getElementById('currency').value=db.settings.currency||'ZAR';
+ document.getElementById('taskDate').value=today();
+ render();
+}
+init();
+</script>
+</body>
+</html>
